@@ -107,7 +107,7 @@ export default function MedicalCostLookup() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 h-full bg-green-200">
+    <div className="max-w-4xl mx-auto p-6 h-full">
       <header className="pb-6">
         <div className = "flex items-center space-x-4">
           <h1 className="text-3xl font-bold text-blue-800">Healthfolio</h1>
@@ -135,7 +135,7 @@ export default function MedicalCostLookup() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search for procedures by name or code..."
-                className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>

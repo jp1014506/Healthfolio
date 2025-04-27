@@ -3,7 +3,7 @@ import TheBigBabe from './components/TheBigBabe';
 
 function App() {
   return (
-    <div className="App h-dvh h-full bg-green-200">
+    <div className="App h-dvh" style = {{ backgroundColor: "#B6E0CA"}}>
       <TheBigBabe />
     </div>
   );
