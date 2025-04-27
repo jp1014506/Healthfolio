@@ -4,7 +4,7 @@ import TheBigBabe from './components/TheBigBabe';
 function App() {
   return (
     <div className="App">
-      <TheBigBabe />
+      <TheBigBabe className = "h-full bg-green-200"/>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, MapPin, Plus, X, DollarSign } from 'lucide-react';
+import { parseCSVData } from '../utils/dataParser';
 
 export default function MedicalCostLookup() {
   // State variables
@@ -10,43 +11,65 @@ export default function MedicalCostLookup() {
   const [selectedProcedures, setSelectedProcedures] = useState([]);
   const [isUsingLocation, setIsUsingLocation] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Mock data for demonstration - this would be replaced with actual CSV data
-  useEffect(() => {
-    // Simulating data loading from CSV file
-    setTimeout(() => {
-      const mockProcedures = [
-        { id: 1, code: "039", name: "Extracranial Procedures", nationalAvgCost: 15892, locations: { "California": 18245, "New York": 19432, "Texas": 14567 } },
-        { id: 2, code: "057", name: "Degenerative Nervous System Disorders", nationalAvgCost: 9324, locations: { "California": 10754, "New York": 11342, "Texas": 8945 } },
-        { id: 3, code: "064", name: "Intracranial Hemorrhage or Stroke", nationalAvgCost: 12654, locations: { "California": 14567, "New York": 15243, "Texas": 11876 } },
-        { id: 4, code: "103", name: "Heart Failure & Shock", nationalAvgCost: 7432, locations: { "California": 8765, "New York": 9243, "Texas": 6987 } },
-        { id: 5, code: "193", name: "Simple Pneumonia & Pleurisy", nationalAvgCost: 6543, locations: { "California": 7653, "New York": 8123, "Texas": 6214 } },
-        { id: 6, code: "207", name: "Respiratory System Diagnosis", nationalAvgCost: 5678, locations: { "California": 6432, "New York": 7123, "Texas": 5432 } },
-        { id: 7, code: "233", name: "Coronary Bypass", nationalAvgCost: 28456, locations: { "California": 32456, "New York": 34123, "Texas": 26754 } },
-        { id: 8, code: "234", name: "Coronary Angioplasty", nationalAvgCost: 18543, locations: { "California": 21456, "New York": 22876, "Texas": 17654 } },
-        { id: 9, code: "292", name: "Heart Catheterization", nationalAvgCost: 7865, locations: { "California": 9126, "New York": 9653, "Texas": 7432 } },
-        { id: 10, code: "301", name: "Hip Replacement", nationalAvgCost: 23456, locations: { "California": 27654, "New York": 28965, "Texas": 22123 } },
-        { id: 11, code: "302", name: "Knee Replacement", nationalAvgCost: 19876, locations: { "California": 23456, "New York": 24789, "Texas": 18765 } },
-        { id: 12, code: "470", name: "Major Joint Replacement", nationalAvgCost: 21543, locations: { "California": 25432, "New York": 26789, "Texas": 20432 } },
-      ];
-      
-      setProcedures(mockProcedures);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+  const [availableLocations, setAvailableLocations] = useState(['National']);
+  const [error, setError] = useState(null);
 
   // Search functionality
   useEffect(() => {
-    if (searchTerm.trim() === '') {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+
+        const data = await parseCSVData('/data/2022_cms_data.csv');
+        console.log(data)
+        setProcedures(data.procedures);
+        setAvailableLocations(data.availableLocations);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Failed to load data:", err);
+        setError("Failed to load medical procedure data. Please try again later.");
+        setIsLoading(false);
+
+        loadMockData();
+      }
+    };
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    if (!searchTerm) {
       setSearchResults([]);
-    } else {
-      const filteredResults = procedures.filter(procedure => 
-        procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        procedure.code.includes(searchTerm)
-      );
-      setSearchResults(filteredResults);
+      return;
     }
+
+    const term = searchTerm.toLowerCase();
+    const results = procedures.filter(p =>
+      p.name.toLowerCase().includes(term) || p.code.includes(term)
+    );
+
+    setSearchResults(results);
   }, [searchTerm, procedures]);
+
+  const loadMockData = () => {
+    const mockProcedures = [
+      { id: 1, code: "039", name: "Extracranial Procedures", nationalAvgCost: 15892, locations: { "California": 18245, "New York": 19432, "Texas": 14567 } },
+      { id: 2, code: "057", name: "Degenerative Nervous System Disorders", nationalAvgCost: 9324, locations: { "California": 10754, "New York": 11342, "Texas": 8945 } },
+      { id: 3, code: "064", name: "Intracranial Hemorrhage or Stroke", nationalAvgCost: 12654, locations: { "California": 14567, "New York": 15243, "Texas": 11876 } },
+      { id: 4, code: "103", name: "Heart Failure & Shock", nationalAvgCost: 7432, locations: { "California": 8765, "New York": 9243, "Texas": 6987 } },
+      { id: 5, code: "193", name: "Simple Pneumonia & Pleurisy", nationalAvgCost: 6543, locations: { "California": 7653, "New York": 8123, "Texas": 6214 } },
+      { id: 6, code: "207", name: "Respiratory System Diagnosis", nationalAvgCost: 5678, locations: { "California": 6432, "New York": 7123, "Texas": 5432 } },
+      { id: 7, code: "233", name: "Coronary Bypass", nationalAvgCost: 28456, locations: { "California": 32456, "New York": 34123, "Texas": 26754 } },
+      { id: 8, code: "234", name: "Coronary Angioplasty", nationalAvgCost: 18543, locations: { "California": 21456, "New York": 22876, "Texas": 17654 } },
+      { id: 9, code: "292", name: "Heart Catheterization", nationalAvgCost: 7865, locations: { "California": 9126, "New York": 9653, "Texas": 7432 } },
+      { id: 10, code: "301", name: "Hip Replacement", nationalAvgCost: 23456, locations: { "California": 27654, "New York": 28965, "Texas": 22123 } },
+      { id: 11, code: "302", name: "Knee Replacement", nationalAvgCost: 19876, locations: { "California": 23456, "New York": 24789, "Texas": 18765 } },
+      { id: 12, code: "470", name: "Major Joint Replacement", nationalAvgCost: 21543, locations: { "California": 25432, "New York": 26789, "Texas": 20432 } },
+    ];
+
+    setProcedures(mockProcedures);
+    setAvailableLocations(['National', 'California', 'New York', 'Texas']);
+  };
 
   // Handle procedure selection
   const addProcedure = (procedure) => {
@@ -83,11 +106,8 @@ export default function MedicalCostLookup() {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   };
 
-  // Available locations (would be extracted from the CSV in a real implementation)
-  const availableLocations = ['National', 'California', 'New York', 'Texas'];
-
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6 h-full bg-green-200">
       <header className="pb-6">
         <div className = "flex items-center space-x-4">
           <h1 className="text-3xl font-bold text-blue-800">Healthfolio</h1>
@@ -155,7 +175,7 @@ export default function MedicalCostLookup() {
             <div className="mb-6">
               <h2 className="text-lg font-semibold mb-3">Search Results</h2>
               {searchResults.length > 0 ? (
-                <div className="bg-white border rounded-lg overflow-hidden">
+                <div className="bg-white border rounded-lg overflow-auto">
                   <table className="min-w-full">
                     <thead className="bg-gray-50">
                       <tr>
