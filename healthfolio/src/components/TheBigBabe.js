@@ -89,7 +89,14 @@ export default function MedicalCostLookup() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <header className="pb-6">
-        <h1 className="text-3xl font-bold text-blue-800">Medical Procedure Cost Lookup</h1>
+        <div className = "flex items-center space-x-4">
+          <h1 className="text-3xl font-bold text-blue-800">Healthfolio</h1>
+            <img
+                src='/assets/image/healthfolioLogo.png'
+                alt="Folder Icon"
+                style={{ width: '50px', height: '50px', cursor: 'pointer' }}
+            />
+          </div>
         <p className="text-gray-600 mt-2">Search for medical procedures to see their costs based on CMS Medicare data</p>
       </header>
 
