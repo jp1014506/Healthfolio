@@ -3,8 +3,8 @@ import TheBigBabe from './components/TheBigBabe';
 
 function App() {
   return (
-    <div className="App">
-      <TheBigBabe className = "h-full bg-green-200"/>
+    <div className="App h-dvh h-full bg-green-200">
+      <TheBigBabe />
     </div>
   );
 }
