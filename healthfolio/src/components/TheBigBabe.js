@@ -21,7 +21,7 @@ export default function MedicalCostLookup() {
         setIsLoading(true);
 
         const data = await parseCSVData('/data/2022_cms_data.csv');
-        console.log(data)
+        console.log(data);
         setProcedures(data.procedures);
         setAvailableLocations(data.availableLocations);
         setIsLoading(false);
@@ -107,172 +107,175 @@ export default function MedicalCostLookup() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 h-full">
-      <header className="pb-6">
-        <div className = "flex items-center space-x-4">
-          <h1 className="text-3xl font-bold text-blue-800">Healthfolio</h1>
-            <img
-                src='/assets/image/healthfolioLogo.png'
-                alt="Folder Icon"
-                style={{ width: '50px', height: '50px', cursor: 'pointer' }}
-            />
-          </div>
-        <p className="text-gray-600 mt-2">Search for medical procedures to see their costs based on CMS Medicare data</p>
+    <>
+      {/* Banner image */}
+      <header className="pb-6 text-center">
+        <img
+          src="/assets/image/Banner.png"
+          alt="Healthfolio Banner"
+          className="mx-auto w-full h-auto rounded-lg shadow-md mb-6"
+        />
       </header>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading procedure data...</div>
-        </div>
-      ) : (
-        <div>
-          {/* Search Bar */}
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search for procedures by name or code..."
-                className="w-full pl-10 pr-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+      <div className="max-w-4xl mx-auto p-6 h-full" style = {{ paddingBottom: "200px"}}>
+        <header className="pb-6">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-3xl font-bold text-blue-800">Healthfolio</h1>
+            <img
+              src="/assets/image/healthfolioLogo.png"
+              alt="Folder Icon"
+              style={{ width: '50px', height: '50px', cursor: 'pointer' }}
+            />
           </div>
+          <p className="text-gray-600 mt-2">
+            Search for medical procedures to see their costs based on CMS Medicare data
+          </p>
+        </header>
 
-          {/* Location Filter */}
-          <div className="mb-6 bg-gray-50 p-4 rounded-lg">
-            <div className="flex items-center">
-              <MapPin className="text-blue-500 mr-2" size={20} />
-              <label className="mr-4 font-medium">Use Location Data:</label>
-              <input
-                type="checkbox"
-                checked={isUsingLocation}
-                onChange={() => setIsUsingLocation(!isUsingLocation)}
-                className="mr-6 h-4 w-4"
-              />
-              
-              <select
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                disabled={!isUsingLocation}
-                className={`p-2 border rounded ${!isUsingLocation ? 'bg-gray-200' : 'bg-white'}`}
-              >
-                {availableLocations.map(loc => (
-                  <option key={loc} value={loc}>{loc}</option>
-                ))}
-              </select>
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              {isUsingLocation 
-                ? `Showing prices for ${location} location`
-                : 'Using national average data (enable location data for region-specific prices)'}
-            </p>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-gray-600">Loading procedure data...</div>
           </div>
-
-          {/* Search Results */}
-          {searchTerm && (
+        ) : (
+          <div>
+            {/* Search Bar */}
             <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-3">Search Results</h2>
-              {searchResults.length > 0 ? (
-                <div className="bg-white border rounded-lg overflow-auto">
-                  <table className="min-w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procedure</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {searchResults.map(procedure => (
-                        <tr key={procedure.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{procedure.code}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{procedure.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {formatCurrency(getProcedureCost(procedure))}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                            <button 
-                              onClick={() => addProcedure(procedure)}
-                              className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            >
-                              <Plus size={16} className="mr-1" /> Add
-                            </button>
-                          </td>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search for procedures by name or code..."
+                  className="w-full pl-10 pr-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Location Filter */}
+            <div className="mb-6 bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <MapPin className="text-blue-500 mr-2" size={20} />
+                <label className="mr-4 font-medium">Use Location Data:</label>
+                <input
+                  type="checkbox"
+                  checked={isUsingLocation}
+                  onChange={() => setIsUsingLocation(!isUsingLocation)}
+                  className="mr-6 h-4 w-4"
+                />
+
+                <select
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  disabled={!isUsingLocation}
+                  className={`p-2 border rounded ${!isUsingLocation ? 'bg-gray-200' : 'bg-white'}`}
+                >
+                  {availableLocations.map(loc => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">
+                {isUsingLocation 
+                  ? `Showing prices for ${location} location`
+                  : 'Using national average data (enable location data for region-specific prices)'}
+              </p>
+            </div>
+
+            {/* Search Results */}
+            {searchTerm && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">Search Results</h2>
+                {searchResults.length > 0 ? (
+                  <div className="bg-white border rounded-lg overflow-auto">
+                    <table className="min-w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procedure</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Cost</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider\">Action</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {searchResults.map(procedure => (
+                          <tr key={procedure.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{procedure.code}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{procedure.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(getProcedureCost(procedure))}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                              <button
+                                onClick={() => addProcedure(procedure)}
+                                className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                              >
+                                <Plus size={16} className="mr-1" /> Add
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <p className="text-gray-500">No procedures found matching "{searchTerm}"</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Selected Procedures */}
+            <div className="bg-blue-50 rounded-lg p-5">
+              <h2 className="text-xl font-semibold mb-4 flex items-center">
+                <DollarSign className="text-blue-600 mr-2" size={20} />Your Cost Estimate
+              </h2>
+              
+              {selectedProcedures.length > 0 ? (
+                <div>
+                  <div className="bg-white rounded-lg border overflow-hidden mb-4">
+                    <table className="min-w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procedure</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Remove</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {selectedProcedures.map(procedure => (
+                          <tr key={procedure.id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{procedure.code} - {procedure.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(getProcedureCost(procedure))}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                              <button onClick={() => removeProcedure(procedure.id)} className="text-red-500 hover:text-red-700">
+                                <X size={18} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <div className="flex justify-between items-center p-4 bg-blue-100 rounded-lg">
+                    <span className="text-lg font-medium">Total Estimated Cost:</span>
+                    <span className="text-xl font-bold text-blue-800">{formatCurrency(calculateTotalCost())}</span>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-gray-500">No procedures found matching "{searchTerm}"</p>
+                <div className="text-center p-8 bg-white rounded-lg border">
+                  <p className="text-gray-500">Search for procedures and add them to your cost estimate</p>
                 </div>
               )}
             </div>
-          )}
-
-          {/* Selected Procedures */}
-          <div className="bg-blue-50 rounded-lg p-5">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <DollarSign className="text-blue-600 mr-2" size={20} />
-              Your Cost Estimate
-            </h2>
-            
-            {selectedProcedures.length > 0 ? (
-              <div>
-                <div className="bg-white rounded-lg border overflow-hidden mb-4">
-                  <table className="min-w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procedure</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Remove</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {selectedProcedures.map(procedure => (
-                        <tr key={procedure.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {procedure.code} - {procedure.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {formatCurrency(getProcedureCost(procedure))}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                            <button 
-                              onClick={() => removeProcedure(procedure.id)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <X size={18} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                
-                <div className="flex justify-between items-center p-4 bg-blue-100 rounded-lg">
-                  <span className="text-lg font-medium">Total Estimated Cost:</span>
-                  <span className="text-xl font-bold text-blue-800">{formatCurrency(calculateTotalCost())}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center p-8 bg-white rounded-lg border">
-                <p className="text-gray-500">Search for procedures and add them to your cost estimate</p>
-              </div>
-            )}
           </div>
-        </div>
-      )}
+        )}
 
-      <footer className="mt-10 pt-4 border-t text-sm text-gray-500">
-        <p>Data Source: CMS Medicare Inpatient Hospitals - by Geography and Service</p>
-        <p className="mt-1">Note: These costs are estimates based on Medicare data and may not reflect your actual costs.</p>
-      </footer>
-    </div>
+        <footer className="mt-10 pt-4 border-t text-sm text-gray-500">
+          <p>Data Source: CMS Medicare Inpatient Hospitals - by Geography and Service</p>
+          <p className="mt-1">Note: These costs are estimates based on Medicare data and may not reflect your actual costs.</p>
+        </footer>
+      </div>
+    </>
   );
 }
